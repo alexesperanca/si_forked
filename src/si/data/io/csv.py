@@ -1,7 +1,9 @@
 import pandas as pd
 
 # FIXME: What to do with features and label?
-def read_csv(filename: str, sep: str, features: bool, label: bool) -> object:
+def read_csv(
+    filename: str, sep: str = " ", features: bool = False, label: bool = False
+) -> object:
     """Read a CSV file and transform it into a pandas dataset object.
 
     Args:
@@ -17,7 +19,13 @@ def read_csv(filename: str, sep: str, features: bool, label: bool) -> object:
 
 
 # FIXME: Same as above
-def write_csv(filename: str, dataset: object, sep: str, features: bool, label: bool):
+def write_csv(
+    filename: str,
+    dataset: object,
+    sep: str = " ",
+    features: bool = False,
+    label: bool = False,
+):
     """Write dataset to a CSV file specified.
 
     Args:

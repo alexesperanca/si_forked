@@ -1,7 +1,7 @@
 import numpy as np
 
-#FIXME: Label?
-def read_data_file(filename: str, sep: str, label: bool) -> object:
+# FIXME: Label?
+def read_data_file(filename: str, sep: str = " ", label: bool = False) -> object:
     """Load data from a text file.
 
     Args:
@@ -15,7 +15,9 @@ def read_data_file(filename: str, sep: str, label: bool) -> object:
     return np.genfromtxt(filename, delimiter=sep)
 
 
-def write_data_file(filename: str, dataset: object, sep: str, label: bool):
+def write_data_file(
+    filename: str, dataset: object, sep: str = " ", label: bool = False
+):
     """Save an array to a text file.
 
     Args:

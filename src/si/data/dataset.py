@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 
 class Dataset:
@@ -7,7 +8,7 @@ class Dataset:
         self.y = y
 
     def shape(self):
-        return self.X.shape[0]
+        return self.x.shape[0]
 
     def has_label(self):
         return self.y
@@ -16,7 +17,7 @@ class Dataset:
         pass
 
     def get_mean(self):
-        pass
+        return self.x.mean()
 
     def get_variance(self):
         pass
@@ -32,3 +33,9 @@ class Dataset:
 
     def summary(self):
         pass
+    
+    def remove_nan(self):
+        return self.x.dropna()
+    
+    def replace_nan(self):
+        return self.x.fillna(0)
