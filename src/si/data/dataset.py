@@ -3,39 +3,118 @@ import pandas as pd
 
 
 class Dataset:
-    def __init__(self, x=None, y=None, features: list = None, label: str = None):
+    def __init__(
+        self,
+        x: np.ndarray,
+        y: np.ndarray = None,
+        features: list = None,
+        label: str = None,
+    ):
+        """Storage of the input values.
+
+        Args:
+            x (np.ndarray): Matrix and table of features.
+            y (np.ndarray, optional): Variable dependent vector. Defaults to None.
+            features (list, optional): Features name. Defaults to None.
+            label (str, optional): Dependent variable vectors name. Defaults to None.
+        """
         self.x = x
         self.y = y
+        self.features = features
+        self.label = label
 
-    def shape(self):
-        return self.x.shape[0]
+    def shape(self) -> tuple:
+        """Obtain the shape of the dataset.
 
-    def has_label(self):
-        return self.y
+        Returns:
+            tuple: Axis shape.
+        """
+        return self.x.shape, self.y.shape
 
-    def get_classes(self):
-        pass
+    def has_label(self) -> bool:
+        """Verifies if we have a dependent variable.
 
-    def get_mean(self):
-        return self.x.mean()
+        Returns:
+            bool: True if we have. False otherwise.
+        """
+        return False if self.y is None else True
 
-    def get_variance(self):
-        pass
+    def get_classes(self) -> np.ndarray | None:
+        """Get the classes of the dataset (possible values of y)
 
-    def get_median(self):
-        pass
+        Returns:
+            np.ndarray|None: Y classes if possible. Otherwise, return None.
+        """
+        return None if self.y is None else np.unique(list(self.y))
 
-    def get_min(self):
-        pass
+    def get_mean(self) -> np.ndarray:
+        """Calculate the mean value of the variables.
+
+        Returns:
+            np.ndarray: Numpy array of the mean values of the variables.
+        """
+        return np.mean(self.x, axis=0)
+
+    def get_variance(self) -> np.ndarray:
+        """Calculate the variance of the variables.
+
+        Returns:
+            np.ndarray: Numpy array of the variance values of the variables.
+        """
+        return np.var(self.x, axis=0)
+
+    def get_median(self) -> np.ndarray:
+        """Calculate the median of the variables.
+
+        Returns:
+            np.ndarray: Numpy array of the median values of the variables.
+        """
+        return np.median(self.x, axis=0)
+
+    def get_min(self) -> np.ndarray:
+        """Calculate the minimum value of each variable.
+
+        Returns:
+            np.ndarray: Numpy array of the minimum values of the variables.
+        """
+        return np.min(self.x, axis=0)
 
     def get_max(self):
-        pass
+        """Calculate the maximum value of each variable.
 
-    def summary(self):
-        pass
-    
-    def remove_nan(self):
-        return self.x.dropna()
-    
-    def replace_nan(self):
-        return self.x.fillna(0)
+        Returns:
+            np.ndarray: Numpy array of the maximum values of the variables.
+        """
+        return np.max(self.x, axis=0)
+
+    def summary(self) -> pd.DataFrame:
+        """Construction of a Dataframe that resumes all the metrics.
+
+        Returns:
+            pd.DataFrame: Metrics of the dataset.
+        """
+        data = [
+            self.get_mean(),
+            self.get_variance(),
+            self.get_median(),
+            self.get_min(),
+            self.get_max(),
+        ]
+        columns = ["Mean", "Variance", "Median", "Minimum", "Maximum"]
+        return pd.DataFrame(data, columns)
+
+    def dropna(self) -> pd.DataFrame:
+        """Remove all NAs in the dataset.
+
+        Returns:
+            pd.DataFrame: Dataset with the NAs removed.
+        """
+        return pd.DataFrame(self.X).dropna(axis=0).reset_index(drop=True)
+
+    def fillna(self, fill_value: int | str) -> pd.DataFrame:
+        """Replaces all NAs in the dataset.
+
+        Returns:
+            pd.DataFrame: Dataset with the NAs replaced.
+        """
+        return pd.DataFrame(self.X).fillna(fill_value)
