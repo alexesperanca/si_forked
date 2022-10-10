@@ -5,16 +5,16 @@ import pandas as pd
 class Dataset:
     def __init__(
         self,
-        x: np.ndarray,
-        y: np.ndarray = None,
+        x: list,
+        y: list = None,
         features: list = None,
         label: str = None,
-    ):
+    ) -> None:
         """Storage of the input values.
 
         Args:
-            x (np.ndarray): Matrix and table of features.
-            y (np.ndarray, optional): Variable dependent vector. Defaults to None.
+            x (list): Matrix and table of features.
+            y (list, optional): Variable dependent vector. Defaults to None.
             features (list, optional): Features name. Defaults to None.
             label (str, optional): Dependent variable vectors name. Defaults to None.
         """
@@ -39,51 +39,51 @@ class Dataset:
         """
         return False if self.y is None else True
 
-    def get_classes(self) -> np.ndarray | None:
+    def get_classes(self) -> list | None:
         """Get the classes of the dataset (possible values of y)
 
         Returns:
-            np.ndarray|None: Y classes if possible. Otherwise, return None.
+            list|None: Y classes if possible. Otherwise, return None.
         """
         return None if self.y is None else np.unique(list(self.y))
 
-    def get_mean(self) -> np.ndarray:
+    def get_mean(self) -> list:
         """Calculate the mean value of the variables.
 
         Returns:
-            np.ndarray: Numpy array of the mean values of the variables.
+            list: Numpy array of the mean values of the variables.
         """
         return np.mean(self.x, axis=0)
 
-    def get_variance(self) -> np.ndarray:
+    def get_variance(self) -> list:
         """Calculate the variance of the variables.
 
         Returns:
-            np.ndarray: Numpy array of the variance values of the variables.
+            list: Numpy array of the variance values of the variables.
         """
         return np.var(self.x, axis=0)
 
-    def get_median(self) -> np.ndarray:
+    def get_median(self) -> list:
         """Calculate the median of the variables.
 
         Returns:
-            np.ndarray: Numpy array of the median values of the variables.
+            list: Numpy array of the median values of the variables.
         """
         return np.median(self.x, axis=0)
 
-    def get_min(self) -> np.ndarray:
+    def get_min(self) -> list:
         """Calculate the minimum value of each variable.
 
         Returns:
-            np.ndarray: Numpy array of the minimum values of the variables.
+            list: Numpy array of the minimum values of the variables.
         """
         return np.min(self.x, axis=0)
 
-    def get_max(self):
+    def get_max(self) -> list:
         """Calculate the maximum value of each variable.
 
         Returns:
-            np.ndarray: Numpy array of the maximum values of the variables.
+            list: Numpy array of the maximum values of the variables.
         """
         return np.max(self.x, axis=0)
 
