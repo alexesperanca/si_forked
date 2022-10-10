@@ -53,7 +53,7 @@ class Dataset:
         Returns:
             list: Numpy array of the mean values of the variables.
         """
-        return np.mean(self.x, axis=0)
+        return list(np.mean(self.x, axis=0))
 
     def get_variance(self) -> list:
         """Calculate the variance of the variables.
@@ -61,7 +61,7 @@ class Dataset:
         Returns:
             list: Numpy array of the variance values of the variables.
         """
-        return np.var(self.x, axis=0)
+        return list(np.var(self.x, axis=0))
 
     def get_median(self) -> list:
         """Calculate the median of the variables.
@@ -69,7 +69,7 @@ class Dataset:
         Returns:
             list: Numpy array of the median values of the variables.
         """
-        return np.median(self.x, axis=0)
+        return list(np.median(self.x, axis=0))
 
     def get_min(self) -> list:
         """Calculate the minimum value of each variable.
@@ -77,7 +77,7 @@ class Dataset:
         Returns:
             list: Numpy array of the minimum values of the variables.
         """
-        return np.min(self.x, axis=0)
+        return list(np.min(self.x, axis=0))
 
     def get_max(self) -> list:
         """Calculate the maximum value of each variable.
@@ -85,7 +85,7 @@ class Dataset:
         Returns:
             list: Numpy array of the maximum values of the variables.
         """
-        return np.max(self.x, axis=0)
+        return list(np.max(self.x, axis=0))
 
     def summary(self) -> pd.DataFrame:
         """Construction of a Dataframe that resumes all the metrics.
@@ -100,8 +100,7 @@ class Dataset:
             self.get_min(),
             self.get_max(),
         ]
-        columns = ["Mean", "Variance", "Median", "Minimum", "Maximum"]
-        return pd.DataFrame(data, columns)
+        return pd.DataFrame(list(zip(*data)), columns=["Mean", "Variance", "Median", "Minimum", "Maximum"])
 
     def dropna(self) -> pd.DataFrame:
         """Remove all NAs in the dataset.
