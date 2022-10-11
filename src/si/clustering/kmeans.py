@@ -17,47 +17,64 @@ class KMeans:
         self.k = k
         self.max_iter = max_iter
         self.distance = distance
-        self.centroides = None
+        self.centroids = None
         self.labels = []
 
     def fit(self, data: list):
-        # FIXME: This if annoying me...
-        self.centroides = [
+        """Gets the labels without difference between the samples
+
+        Args:
+            data (list): Input data samples.
+        """
+        dataframe = pd.DataFrame(data)
+
+        # Init centroids
+        self.centroids = [
             list(np.random.permutation(len(data[0]))) for _ in range(self.k)
         ]
-        iterations = 0
-        for sample in data:
-            distances = self.distance(sample, self.centroides)
-            min_dist_idx = distances.index(min(distances))
-            # Centroid with the lowest distance
-            min_dist_cent = self.centroides[min_dist_idx]
-            self.labels.append(np.mean(min_dist_cent))
-        print(self.labels)
-        print(len(self.labels))
-        print(len(data))
+        niter = 0
+        while niter < self.max_iter:
+            previous_labels = self.labels
+            niter += 1
+            # Get the labels
+            self.predict(data)
+            # End if we have no change in the labels
+            if previous_labels == self.labels:
+                break
+            
+            dataframe["centroid"] = self.labels
+            self.centroids = (
+                dataframe.groupby("centroid")
+                .agg("mean")
+                .reset_index(drop=True)
+                .values.tolist()
+            )
 
-    def transform(self, data: list):
+    def transform(self, data: list) -> list:
         """Obtains all the distances of the samples in the data and the centroids.
 
         Args:
             data (list): Initial data input.
+
+        Returns:
+            list: Euclidean distances between each sample and the centroids
         """
-        return [self.distance(sample, self.centroides) for sample in data]
+        return [self.distance(sample, self.centroids) for sample in data]
 
     def predict(self, data: list):
         """Obtains the labels of the data.
 
         Args:
-            data (list): Initial data input.
+            data (list): Input data samples.
         """
         distances = self.transform(data)
-        labels = []
-        for idx, _ in enumerate(data):
-            min_dist_idx = distances[idx].index(min(distances[idx]))
+        closest_centroids = []
+        for sample in data:
+            distances = self.distance(sample, self.centroids)
+            min_dist_idx = distances.index(min(distances))
             # Centroid with the lowest distance
-            min_dist_cent = self.centroides[min_dist_idx]
-            labels.append(min_dist_cent)
-        self.labels = labels
+            closest_centroids.append(min_dist_idx)
+        self.labels = closest_centroids
 
 
 if __name__ == "__main__":
@@ -72,3 +89,4 @@ if __name__ == "__main__":
     iris_scale = preprocessing.scale(iris.iloc[:, :4])
     test = KMeans(k=3, max_iter=10)
     test.fit(data=iris_scale)
+    print(test.labels)
