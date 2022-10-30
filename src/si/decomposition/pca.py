@@ -22,7 +22,7 @@ class PCA:
             dataset (object): Input dataset.
 
         Returns:
-            object: Self object.
+            object: Class instance.
         """
         self.mean = np.mean(dataset.x, axis=0)
         self.data_centered = np.subtract(dataset.x, self.mean)

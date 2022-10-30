@@ -1,7 +1,5 @@
 import sys
-from typing_extensions import Self
 import numpy as np
-import logging
 
 CLASSES_PATH = "src/si"
 sys.path.insert(0, CLASSES_PATH)
