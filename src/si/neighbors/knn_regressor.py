@@ -7,12 +7,12 @@ sys.path.insert(0, CLASSES_PATH)
 
 from statistics.euclidean_distance import euclidean_distance
 from data.dataset import Dataset
-from metrics.accuracy import accuracy
+from metrics.rmse import rmse
 
 
-class KNNClassifier:
+class KNNRegressor:
     def __init__(self, k: int, distance: Callable = euclidean_distance):
-        """K-nearest neighbors algorithm to estimate the sample class by the most similar k-examples.
+        """K-nearest neighbors similar algorithm ti estimate the mean value of the most similar k-examples. More indicated to regression problems.
 
         Args:
             k (int): K number of examples to analyze.
@@ -20,7 +20,6 @@ class KNNClassifier:
         """
         self.k = k
         self.distance = distance
-        self.training_dataset = None
 
     def fit(self, dataset: object) -> object:
         """Training dataset storage.
@@ -47,8 +46,7 @@ class KNNClassifier:
         # K indexes with the closest distance
         closest_indexes = np.argsort(euclidean_distances)[:self.k]
         y_classes = self.training_dataset.y[closest_indexes]
-        unique_indexes, count = np.unique(y_classes, return_counts=True)
-        return unique_indexes[np.argmax(count)]
+        return np.mean(y_classes)
 
     def predict(self, dataset: object) -> list:
         """Calculates the estimated classes for the input dataset.
@@ -71,4 +69,4 @@ class KNNClassifier:
         Returns:
             float: Error between the real and the predicted values.
         """
-        return accuracy(dataset.y, self.predict(dataset))
+        return rmse(dataset.y, self.predict(dataset))
