@@ -22,14 +22,14 @@ class KNNClassifier:
         self.distance = distance
         self.training_dataset = None
 
-    def fit(self, dataset: object) -> object:
+    def fit(self, dataset: Dataset) -> "KNNClassifier":
         """Training dataset storage.
 
         Args:
-            dataset (object): Instance of the Dataset class.
+            dataset (Dataset): Instance of the Dataset class.
 
         Returns:
-            object: Class instance.
+            KNNClassifier: Class instance.
         """
         self.training_dataset = dataset
         return self
@@ -50,23 +50,23 @@ class KNNClassifier:
         unique_indexes, count = np.unique(y_classes, return_counts=True)
         return unique_indexes[np.argmax(count)]
 
-    def predict(self, dataset: object) -> list:
+    def predict(self, dataset: Dataset) -> np.ndarray:
         """Calculates the estimated classes for the input dataset.
 
         Args:
-            dataset (object): Input dataset.
+            dataset (Dataset): Input dataset.
 
         Returns:
-            list: Estimated classes (Y predicted).
+            np.ndarray: Estimated classes (Y predicted).
         """
         assert self.training_dataset, "No training dataset, please run fit() function with the respective dataset as argument input."
         return np.apply_along_axis(self._get_closest_value, axis=1, arr=dataset.x)
 
-    def score(self, dataset: object) -> float:
+    def score(self, dataset: Dataset) -> float:
         """Calculates the accuracy between the real values and the predicted ones.
 
         Args:
-            dataset (object): Input dataset.
+            dataset (Dataset): Input dataset.
 
         Returns:
             float: Error between the real and the predicted values.

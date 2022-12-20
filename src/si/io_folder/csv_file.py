@@ -9,22 +9,22 @@ from data.dataset import Dataset
 
 
 def read_csv(
-    filename: str, sep: str = ",", features: bool = True, label: int | None = None
-) -> object:
+    filename: str, sep: str = ",", features: bool = False, label: int | None = None
+) -> Dataset:
     """Read a CSV file and transform it into a pandas dataset object.
 
     Args:
         filename (str): Directory of the CSV file.
-        sep (str): Delimiters between values.
-        features (bool): If the file has the features names. Defaults to True.
-        label (int | None): Column index to be used as the dependent variable.
+        sep (str): Delimiters between values. Defaults to ",".
+        features (bool): If the file has the features names. Defaults to False.
+        label (int | None): Column index to be used as the dependent variable. Defaults to None.
 
     Returns:
-        object: Dataset.
+        Dataset: Final Dataset read from CSV.
     """
     data = pd.read_csv(filename, sep=sep)
     headers = list(data.columns)
-    header_label = headers[label]
+    header_label = headers[label] if label else None
     new_features = []
 
     if label and features:

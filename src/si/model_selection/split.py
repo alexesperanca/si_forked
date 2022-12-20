@@ -7,7 +7,7 @@ sys.path.insert(0, CLASSES_PATH)
 from data.dataset import Dataset
 
 
-def train_test_split(dataset: object, test_size: float, random_state: int) -> tuple:
+def train_test_split(dataset: object, test_size: float = 0.2, random_state: int = 42) -> tuple:
     """Division of the given data into a section to train and other to test.
 
     Args:
@@ -40,8 +40,8 @@ def train_test_split(dataset: object, test_size: float, random_state: int) -> tu
     train_x, test_x, train_y, test_y = (
         dataset.x[train_index],
         dataset.x[test_index],
-        dataset.y[train_index],
-        dataset.y[test_index],
+        dataset.y[train_index] if dataset.y else None,
+        dataset.y[test_index] if dataset.y else None,
     )
 
     train_data = Dataset(train_x, train_y, dataset.features, dataset.label)

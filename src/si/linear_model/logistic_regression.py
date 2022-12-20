@@ -5,14 +5,15 @@ CLASSES_PATH = "src/si"
 sys.path.insert(0, CLASSES_PATH)
 
 from data.dataset import Dataset
-from metrics.mse import mse
+from metrics.accuracy import accuracy
+from statistics.sigmoid_function import sigmoid_function
 
 
-class RidgeRegression:
+class LogisticRegression:
     def __init__(
         self, l2_penalty: float = 1, alpha: float = 0.001, max_iter: int = 1000
     ):
-        """Linear model using the L2 Regularization. Solves the linear regression issue by adapting a Gradient Descent technique. 
+        """Logistic model using the L2 Regularization. Solves the linear regression issue by adapting a Gradient Descent technique.
 
         Args:
             l2_penalty (float, optional): L2 regularization. Defaults to 1.
@@ -25,14 +26,14 @@ class RidgeRegression:
         self.theta = None
         self.theta_zero = None
 
-    def fit(self, dataset: Dataset) -> "RidgeRegression":
-        """Estimation of the theta and theta zero for the entry dataset.
+    def fit(self, dataset: Dataset) -> "LogisticRegression":
+        """Estimation of the theta and theta zero for the entry dataset using the sigmoid function Y values.
 
         Args:
             dataset (Dataset): Dataset input.
 
         Returns:
-            RidgeRegression: Fitted model.
+            LogisticRegression: Fitted model.
         """
         # x_shape == m and y_shape == n
         x_shape, y_shape = dataset.shape()
@@ -46,6 +47,9 @@ class RidgeRegression:
             # Predict Y
             # FIXME: Doubts in this equation
             y_pred = np.dot(dataset.X, self.theta) + self.theta_zero
+
+            # apply sigmoid function
+            y_pred = sigmoid_function(y_pred)
 
             # Calculate the gradient for the alpha
             # Gradient = alpha * (1/m) * SUM((Predicted Y - Real Y) * X Values)
@@ -66,7 +70,7 @@ class RidgeRegression:
         return self
 
     def predict(self, dataset: Dataset) -> np.array:
-        """Estimates the value of predicted Y with the theta parameters.
+        """Estimates the value of predicted Y with the sigmoid function.
 
         Args:
             dataset (Dataset): Dataset input.
@@ -74,19 +78,25 @@ class RidgeRegression:
         Returns:
             np.array: Predicted Y values.
         """
-        return np.dot(dataset.x, self.theta) + self.theta_zero
+        predictions = sigmoid_function(np.dot(dataset.X, self.theta) + self.theta_zero)
+
+        # Convert the predictions to 0 or 1
+        mask = predictions >= 0.5
+        predictions[mask] = 1
+        predictions[~mask] = 0
+        return predictions
 
     def score(self, dataset: Dataset) -> float:
-        """Calculates the mean squared error of the predicted values.
+        """Calculates the accuracy of the predicted values.
 
         Args:
             dataset (Dataset): Dataset input.
 
         Returns:
-            float: Mean squared error.
+            float: Predict accuracy value.
         """
         y_pred = self.predict(dataset)
-        return mse(dataset.y, y_pred)
+        return accuracy(dataset.y, y_pred)
 
     def cost(self, dataset: Dataset) -> float:
         """Computes the cost function between the predicted values and the real ones.
@@ -97,11 +107,15 @@ class RidgeRegression:
         Returns:
             float: Cost function of the model.
         """
-        y_pred = self.predict(dataset)
-        return (
-            np.sum((y_pred - dataset.y) ** 2)
-            + (self.l2_penalty * np.sum(self.theta**2))
-        ) / (2 * len(dataset.y))
+        predictions = sigmoid_function(np.dot(dataset.X, self.theta) + self.theta_zero)
+        cost = (-dataset.y * np.log(predictions)) - (
+            (1 - dataset.y) * np.log(1 - predictions)
+        )
+        cost = np.sum(cost) / dataset.shape()[0]
+        cost = cost + (
+            self.l2_penalty * np.sum(self.theta**2) / (2 * dataset.shape()[0])
+        )
+        return cost
 
 
 if __name__ == "__main__":
