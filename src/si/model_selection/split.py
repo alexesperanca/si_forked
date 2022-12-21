@@ -25,8 +25,8 @@ def train_test_split(dataset: object, test_size: float = 0.2, random_state: int 
     # Makes the seed choice aleatory
     np.random.seed(random_state)
 
-    dataset_size = dataset.shape()[0][0]
-    index_division = round(dataset_size * test_size)
+    dataset_size = dataset.shape()[0]
+    index_division = int(dataset_size * test_size)
 
     # Generate the permutations
     permutations = np.random.permutation(dataset_size)
@@ -40,8 +40,8 @@ def train_test_split(dataset: object, test_size: float = 0.2, random_state: int 
     train_x, test_x, train_y, test_y = (
         dataset.x[train_index],
         dataset.x[test_index],
-        dataset.y[train_index] if dataset.y else None,
-        dataset.y[test_index] if dataset.y else None,
+        dataset.y[train_index],
+        dataset.y[test_index],
     )
 
     train_data = Dataset(train_x, train_y, dataset.features, dataset.label)

@@ -6,13 +6,14 @@ sys.path.insert(0, CLASSES_PATH)
 
 from data.dataset import Dataset
 from metrics.mse import mse
+import matplotlib.pyplot as plt
 
 
 class RidgeRegression:
     def __init__(
         self, l2_penalty: float = 1, alpha: float = 0.001, max_iter: int = 1000
     ):
-        """Linear model using the L2 Regularization. Solves the linear regression issue by adapting a Gradient Descent technique. 
+        """Linear model using the L2 Regularization. Solves the linear regression issue by adapting a Gradient Descent technique.
 
         Args:
             l2_penalty (float, optional): L2 regularization. Defaults to 1.
@@ -24,12 +25,14 @@ class RidgeRegression:
         self.max_iter = max_iter
         self.theta = None
         self.theta_zero = None
+        self.cost_history = {}
 
-    def fit(self, dataset: Dataset) -> "RidgeRegression":
+    def fit(self, dataset: Dataset, use_adaptive_alpha: bool = False) -> "RidgeRegression":
         """Estimation of the theta and theta zero for the entry dataset.
 
         Args:
             dataset (Dataset): Dataset input.
+            use_adaptive_alpha (bool, optional): Utilizes the different version where the alpha is reduced when reached the cost threshold. Defaults to False.
 
         Returns:
             RidgeRegression: Fitted model.
@@ -40,17 +43,19 @@ class RidgeRegression:
         # Model parameters
         self.theta = np.zeros(y_shape)
         self.theta_zero = 0
+        prev_cost = None
+        cost_threshold = 1
 
         # gradient descent
-        for _ in range(self.max_iter):
+        for i in range(self.max_iter):
             # Predict Y
             # FIXME: Doubts in this equation
-            y_pred = np.dot(dataset.X, self.theta) + self.theta_zero
+            y_pred = np.dot(dataset.x, self.theta) + self.theta_zero
 
             # Calculate the gradient for the alpha
             # Gradient = alpha * (1/m) * SUM((Predicted Y - Real Y) * X Values)
             gradient = (self.alpha * (1 / x_shape)) * np.dot(
-                y_pred - dataset.y, dataset.X
+                y_pred - dataset.y, dataset.x
             )
 
             # Regularization term
@@ -63,6 +68,19 @@ class RidgeRegression:
             self.theta_zero = self.theta_zero - (self.alpha * (1 / x_shape)) * np.sum(
                 y_pred - dataset.y
             )
+
+            # Create the cost history along the iterations
+            curr_cost = self.cost(dataset)
+            self.cost_history[i] = curr_cost
+
+            # Stop when the cost change is lower than the threshold
+            if prev_cost and prev_cost - curr_cost < cost_threshold:
+                if not use_adaptive_alpha:
+                    break
+                self.alpha /= 2
+
+            prev_cost = curr_cost
+
         return self
 
     def predict(self, dataset: Dataset) -> np.array:
@@ -103,7 +121,28 @@ class RidgeRegression:
             + (self.l2_penalty * np.sum(self.theta**2))
         ) / (2 * len(dataset.y))
 
+    def cost_plot(self):
+        """Design the plot of the cost history along the iterations of the model prediction."""
+        plt.plot(self.cost_history.keys(), self.cost_history.values())
+        plt.title("Cost History")
+        plt.ylabel("Cost")
+        plt.xlabel("Iterations")
+        plt.show()
+
 
 if __name__ == "__main__":
-    # FIXME: Add tests and the evaluation for this methods
-    pass
+    from io_folder.csv_file import read_csv
+    from sklearn.preprocessing import StandardScaler
+    from model_selection.split import train_test_split
+
+    dataset = read_csv(r"datasets\cpu.csv", features=True, label=6)
+    dataset.x = StandardScaler().fit_transform(dataset.x)
+
+    # Split the dataset
+    dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
+    # Along the 2000 iterations we enter a plateau, meaning that more than 2000 iterations is worthless
+    lg = RidgeRegression(max_iter=3000)
+    lg.fit(dataset, alpha_reduction=True)
+    print("Score:", lg.score(dataset))
+    print("Cost:", lg.cost(dataset))
+    lg.cost_plot()

@@ -36,6 +36,7 @@ def read_csv(
     if not label:
         return Dataset(data, None, new_features, header_label)
 
+    # Define the column defined as the Y data
     y = data[:, label]
     data = np.delete(data, label, axis=1)
     return Dataset(data, y, new_features, header_label)

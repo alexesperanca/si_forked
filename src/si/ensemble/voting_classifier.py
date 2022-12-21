@@ -9,7 +9,12 @@ from metrics.accuracy import accuracy
 
 
 class VotingClassifier:
-    def __init__(self, models):
+    def __init__(self, models: list):
+        """Ensemble classifier to predict class labels through a majority vote of models.
+
+        Args:
+            models (list): Models to use in the ensemble.
+        """
         self.models = models
 
     def fit(self, dataset: Dataset) -> "VotingClassifier":
@@ -64,7 +69,7 @@ class VotingClassifier:
         Returns:
             float: Mean accuracy.
         """
-        return accuracy(dataset.x, self.predict(dataset))
+        return accuracy(dataset.y, self.predict(dataset))
 
 
 if __name__ == "__main__":
@@ -75,7 +80,7 @@ if __name__ == "__main__":
     from neighbors.knn_classifier import KNNClassifier
     from linear_model.logistic_regression import LogisticRegression
 
-    dataset = read_csv(r"datasets\breast-bin.csv")
+    dataset = read_csv(r"datasets\breast-bin.csv", label=-1)
     dataset.X = StandardScaler().fit_transform(dataset.x)
 
     # Split the dataset
@@ -85,14 +90,11 @@ if __name__ == "__main__":
     knn = KNNClassifier(k=3)
     lg = LogisticRegression(l2_penalty=1, alpha=0.001, max_iter=1000)
 
-    # # initialize the Voting classifier
-    # voting = VotingClassifier([knnc, knnr])
+    # initialize the Voting classifier
+    voting = VotingClassifier([knn, lg])
 
-    # voting.fit(dataset_train)
+    voting.fit(dataset_train)
 
-    # # compute the score
-    # score = voting.score(dataset_test)
-    # print(f"Score: {score}")
-
-    # print(dataset_test.y)
-    # print(voting.predict(dataset_test))
+    # compute the score
+    score = voting.score(dataset_test)
+    print(f"Score: {score}")

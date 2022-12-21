@@ -29,7 +29,7 @@ class Dataset:
         Returns:
             tuple: Axis shape.
         """
-        return self.x.shape, self.y.shape if self.y else None
+        return self.x.shape
 
     def has_label(self) -> bool:
         """Verifies if we have a dependent variable.
