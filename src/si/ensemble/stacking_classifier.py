@@ -64,7 +64,7 @@ class StackingClassifier:
         """Calculates the mean accuracy between the data input and the forecast prediction.
 
         Args:
-            dataset (Dataset): Data input.
+            dataset (Dataset): Dataset input.Dataset input.
 
         Returns:
             float: Mean accuracy.
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     from linear_model.logistic_regression import LogisticRegression
 
     dataset = read_csv(r"datasets\breast-bin.csv", label=-1)
-    dataset.X = StandardScaler().fit_transform(dataset.x)
+    dataset.x = StandardScaler().fit_transform(dataset.x)
 
     # Split the dataset
     dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
