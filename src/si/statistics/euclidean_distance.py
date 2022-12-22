@@ -1,15 +1,15 @@
 import numpy as np
 
 
-def euclidean_distance(x: list, y: list) -> list:
+def euclidean_distance(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     """Calculates the euclidean distance between the x sample and all the samples in y.
 
     Args:
-        x (list): Unique sample.
-        y (list): Array of samples.
+        x (np.ndarray): Unique sample.
+        y (np.ndarray): Array of samples.
 
     Returns:
-        list: Euclidean distance of x sample to all the samples in y.
+        np.ndarray: Euclidean distance of x sample to all the samples in y.
     """
     res = []
     for sample in y:

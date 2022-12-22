@@ -1,9 +1,12 @@
-def accuracy(y_true: list, y_pred: list) -> float:
+import numpy as np
+
+
+def accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Calculate the accuracy between 2 lists.
 
     Args:
-        y_true (list): Values of the variable.
-        y_pred (list): Predicted values.
+        y_true ( np.ndarray): Values of the variable.
+        y_pred ( np.ndarray): Predicted values.
 
     Returns:
         float: Accuracy result of the prediction

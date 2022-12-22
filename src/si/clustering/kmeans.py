@@ -1,9 +1,11 @@
 import sys
 import numpy as np
+import pandas as pd
 
 CLASSES_PATH = "src/si"
 sys.path.insert(0, CLASSES_PATH)
 
+from data.dataset import Dataset
 from statistics.euclidean_distance import euclidean_distance
 from typing import Callable
 
@@ -18,73 +20,71 @@ class KMeans:
         self.centroids = None
         self.labels = []
 
-    def fit(self, data: list):
+    def fit(self, dataset: np.ndarray):
         """Gets the labels without difference between the samples
 
         Args:
-            data (list): Input data samples.
+            data (np.ndarray): Input data samples.
         """
-        dataframe = pd.DataFrame(data)
-
+        
+        df = pd.DataFrame(dataset.x)
         # Init centroids
         self.centroids = [
-            list(np.random.permutation(len(data[0]))) for _ in range(self.k)
+            list(np.random.permutation(dataset.shape()[0])) for _ in range(self.k)
         ]
         niter = 0
         while niter < self.max_iter:
             previous_labels = self.labels
             niter += 1
             # Get the labels
-            self.predict(data)
+            self.predict(dataset.x)
             # End if we have no change in the labels
             if previous_labels == self.labels:
                 break
-            
-            dataframe["centroid"] = self.labels
+
+            df["centroid"] = self.labels
             self.centroids = (
-                dataframe.groupby("centroid")
+                df.groupby("centroid")
                 .agg("mean")
                 .reset_index(drop=True)
                 .values.tolist()
             )
 
-    def transform(self, data: list) -> list:
-        """Obtains all the distances of the samples in the data and the centroids.
+    def transform(self, dataset: Dataset) -> list:
+        """Obtains all the distances of the samples in the dataset and the centroids.
 
         Args:
-            data (list): Initial data input.
+            dataset (Dataset): Dataset input.
 
         Returns:
             list: Euclidean distances between each sample and the centroids
         """
-        return [self.distance(sample, self.centroids) for sample in data]
+        print(self.centroids)
+        return [self.distance(sample, self.centroids) for sample in dataset]
 
-    def predict(self, data: list):
-        """Obtains the labels of the data.
+    def predict(self, dataset: Dataset):
+        """Obtains the labels of the dataset.
 
         Args:
-            data (list): Input data samples.
+            dataset (Dataset): Dataset input.
         """
-        distances = self.transform(data)
+        distances = self.transform(dataset)
         closest_centroids = []
-        for sample in data:
+        for sample in dataset:
             distances = self.distance(sample, self.centroids)
             min_dist_idx = distances.index(min(distances))
             # Centroid with the lowest distance
             closest_centroids.append(min_dist_idx)
-        self.labels = closest_centroids
+        return closest_centroids
 
 
 if __name__ == "__main__":
-    import pandas as pd
-    from sklearn import preprocessing
+    from io_folder.csv_file import read_csv
 
-    iris = pd.read_csv(
+    iris = read_csv(
         r"C:\Users\alexandre.esperanca\Desktop\Learning\si_forked\datasets\iris.csv",
-        sep=",",
-        index_col=4,
+        label=4,
     )
-    iris_scale = preprocessing.scale(iris.iloc[:, :4])
-    test = KMeans(k=3, max_iter=10)
-    test.fit(data=iris_scale)
-    print(test.labels)
+    kmeans = KMeans(k=3, max_iter=10)
+    kmeans.fit(iris)
+    print(kmeans.predict(iris))

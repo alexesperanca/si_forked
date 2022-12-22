@@ -7,7 +7,7 @@ sys.path.insert(0, CLASSES_PATH)
 from data.dataset import Dataset
 
 
-def train_test_split(dataset: object, test_size: float, random_state: int) -> tuple:
+def train_test_split(dataset: object, test_size: float = 0.2, random_state: int = 42) -> tuple:
     """Division of the given data into a section to train and other to test.
 
     Args:
@@ -25,8 +25,8 @@ def train_test_split(dataset: object, test_size: float, random_state: int) -> tu
     # Makes the seed choice aleatory
     np.random.seed(random_state)
 
-    dataset_size = dataset.shape()[0][0]
-    index_division = round(dataset_size * test_size)
+    dataset_size = dataset.shape()[0]
+    index_division = int(dataset_size * test_size)
 
     # Generate the permutations
     permutations = np.random.permutation(dataset_size)

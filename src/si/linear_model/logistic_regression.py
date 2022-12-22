@@ -5,15 +5,16 @@ CLASSES_PATH = "src/si"
 sys.path.insert(0, CLASSES_PATH)
 
 from data.dataset import Dataset
-from metrics.mse import mse
+from metrics.accuracy import accuracy
+from statistics.sigmoid_function import sigmoid_function
 import matplotlib.pyplot as plt
 
 
-class RidgeRegression:
+class LogisticRegression:
     def __init__(
         self, l2_penalty: float = 1, alpha: float = 0.001, max_iter: int = 1000
     ):
-        """Linear model using the L2 Regularization. Solves the linear regression issue by adapting a Gradient Descent technique.
+        """Logistic model using the L2 Regularization. Solves the linear regression issue by adapting a Gradient Descent technique.
 
         Args:
             l2_penalty (float, optional): L2 regularization. Defaults to 1.
@@ -27,15 +28,15 @@ class RidgeRegression:
         self.theta_zero = None
         self.cost_history = {}
 
-    def fit(self, dataset: Dataset, use_adaptive_alpha: bool = False) -> "RidgeRegression":
-        """Estimation of the theta and theta zero for the entry dataset.
+    def fit(self, dataset: Dataset, use_adaptive_alpha: bool = False) -> "LogisticRegression":
+        """Estimation of the theta and theta zero for the entry dataset using the sigmoid function Y values.
 
         Args:
             dataset (Dataset): Dataset input.
             use_adaptive_alpha (bool, optional): Utilizes the different version where the alpha is reduced when reached the cost threshold. Defaults to False.
 
         Returns:
-            RidgeRegression: Fitted model.
+            LogisticRegression: Fitted model.
         """
         # x_shape == m and y_shape == n
         x_shape, y_shape = dataset.shape()
@@ -44,13 +45,13 @@ class RidgeRegression:
         self.theta = np.zeros(y_shape)
         self.theta_zero = 0
         prev_cost = None
-        cost_threshold = 1
+        cost_threshold = 0.0001
 
         # gradient descent
         for i in range(self.max_iter):
-            # Predict Y
+            # Predict Y with the sigmoid function
             # FIXME: Doubts in this equation
-            y_pred = np.dot(dataset.x, self.theta) + self.theta_zero
+            y_pred = sigmoid_function(np.dot(dataset.x, self.theta) + self.theta_zero)
 
             # Calculate the gradient for the alpha
             # Gradient = alpha * (1/m) * SUM((Predicted Y - Real Y) * X Values)
@@ -72,7 +73,7 @@ class RidgeRegression:
             # Create the cost history along the iterations
             curr_cost = self.cost(dataset)
             self.cost_history[i] = curr_cost
-
+            
             # Stop when the cost change is lower than the threshold
             if prev_cost and prev_cost - curr_cost < cost_threshold:
                 if not use_adaptive_alpha:
@@ -80,11 +81,10 @@ class RidgeRegression:
                 self.alpha /= 2
 
             prev_cost = curr_cost
-
         return self
 
     def predict(self, dataset: Dataset) -> np.array:
-        """Estimates the value of predicted Y with the theta parameters.
+        """Estimates the value of predicted Y with the sigmoid function.
 
         Args:
             dataset (Dataset): Dataset input.
@@ -92,19 +92,25 @@ class RidgeRegression:
         Returns:
             np.array: Predicted Y values.
         """
-        return np.dot(dataset.x, self.theta) + self.theta_zero
+        predictions = sigmoid_function(np.dot(dataset.x, self.theta) + self.theta_zero)
+
+        # Convert the predictions to 0 or 1
+        mask = predictions >= 0.5
+        predictions[mask] = 1
+        predictions[~mask] = 0
+        return predictions
 
     def score(self, dataset: Dataset) -> float:
-        """Calculates the mean squared error of the predicted values.
+        """Calculates the accuracy of the predicted values.
 
         Args:
             dataset (Dataset): Dataset input.
 
         Returns:
-            float: Mean squared error.
+            float: Predict accuracy value.
         """
         y_pred = self.predict(dataset)
-        return mse(dataset.y, y_pred)
+        return accuracy(dataset.y, y_pred)
 
     def cost(self, dataset: Dataset) -> float:
         """Computes the cost function between the predicted values and the real ones.
@@ -115,11 +121,20 @@ class RidgeRegression:
         Returns:
             float: Cost function of the model.
         """
-        y_pred = self.predict(dataset)
-        return (
-            np.sum((y_pred - dataset.y) ** 2)
-            + (self.l2_penalty * np.sum(self.theta**2))
-        ) / (2 * len(dataset.y))
+        predictions = sigmoid_function(np.dot(dataset.x, self.theta) + self.theta_zero)
+        x_shape, _ = dataset.shape()
+        add_value = self.l2_penalty / (2 * x_shape) * np.sum(self.theta**2)
+
+        # Fix division from 0 and -inf values (NOT SURE) -> FIXME: np.log(1 - predictions, where=1 - predictions > 0)
+        logarithm_value = np.log(1 - predictions)
+        cost = (
+            -1
+            / x_shape
+            * np.sum(
+                dataset.y * np.log(predictions) + (1 - dataset.y) * logarithm_value
+            )
+        )
+        return cost + add_value
 
     def cost_plot(self):
         """Design the plot of the cost history along the iterations of the model prediction."""
@@ -140,8 +155,7 @@ if __name__ == "__main__":
 
     # Split the dataset
     dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
-    # Along the 2000 iterations we enter a plateau, meaning that more than 2000 iterations is worthless
-    lg = RidgeRegression(max_iter=3000)
+    lg = LogisticRegression()
     lg.fit(dataset, alpha_reduction=True)
     print("Score:", lg.score(dataset))
     print("Cost:", lg.cost(dataset))

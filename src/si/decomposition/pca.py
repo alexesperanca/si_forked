@@ -1,5 +1,10 @@
+import sys
 import numpy as np
 
+DATASET_CLASS_PATH = "src/si"
+sys.path.insert(0, DATASET_CLASS_PATH)
+
+from data.dataset import Dataset
 
 class PCA:
     def __init__(self, n_components: int):
@@ -15,14 +20,14 @@ class PCA:
         self.explained_variance = None
         self.data_centered = None
 
-    def fit(self, dataset: object) -> object:
+    def fit(self, dataset: Dataset) -> "PCA":
         """Centers the data provided, calculates the principal components, and the explained variance.
 
         Args:
-            dataset (object): Input dataset.
+            dataset (Dataset): Input dataset.
 
         Returns:
-            object: Class instance.
+            PCA: Class instance.
         """
         self.mean = np.mean(dataset.x, axis=0)
         self.data_centered = np.subtract(dataset.x, self.mean)
@@ -38,14 +43,14 @@ class PCA:
         self.explained_variance = ev[: self.n_components]
         return self
 
-    def transform(self, dataset: object) -> list:
+    def transform(self, dataset: Dataset) -> np.ndarray:
         """Calculates the reduced X axis from the dataset.
 
         Args:
-            dataset (object): Input dataset.
+            dataset (Dataset): Input dataset.
 
         Returns:
-            list: Reduced X axis.
+            np.ndarray: Reduced X axis.
         """
         # If the function fit was not called previously 
         if self.mean is None:

@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 
-def read_data_file(filename: str, sep: str = ",", label: int | None = None) -> object:
+def read_data_file(filename: str, sep: str = ",", label: int | None = None) -> Dataset:
     """Load data from a text file.
 
     Args:
@@ -17,7 +17,7 @@ def read_data_file(filename: str, sep: str = ",", label: int | None = None) -> o
         label (int | None): Column index to be used as the dependent variable. Defaults to None.
 
     Returns:
-        object: Dataset.
+        Dataset: Final Dataset read from file.
     """
     data = np.genfromtxt(filename, delimiter=sep)
     if not label:

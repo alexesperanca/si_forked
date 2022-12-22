@@ -29,7 +29,7 @@ class Dataset:
         Returns:
             tuple: Axis shape.
         """
-        return self.x.shape, self.y.shape
+        return self.x.shape
 
     def has_label(self) -> bool:
         """Verifies if we have a dependent variable.
@@ -39,53 +39,53 @@ class Dataset:
         """
         return False if self.y is None else True
 
-    def get_classes(self) -> list | None:
+    def get_classes(self) -> np.ndarray | None:
         """Get the classes of the dataset (possible values of y)
 
         Returns:
-            list|None: Y classes if possible. Otherwise, return None.
+            np.ndarray|None: Y classes if possible. Otherwise, return None.
         """
         return None if self.y is None else np.unique(list(self.y))
 
-    def get_mean(self) -> list:
+    def get_mean(self) -> np.ndarray:
         """Calculate the mean value of the variables.
 
         Returns:
-            list: Numpy array of the mean values of the variables.
+            np.ndarray: Numpy array of the mean values of the variables.
         """
-        return list(np.mean(self.x, axis=0))
+        return np.ndarray(np.mean(self.x, axis=0))
 
-    def get_variance(self) -> list:
+    def get_variance(self) -> np.ndarray:
         """Calculate the variance of the variables.
 
         Returns:
-            list: Numpy array of the variance values of the variables.
+            np.ndarray: Numpy array of the variance values of the variables.
         """
-        return list(np.var(self.x, axis=0))
+        return np.ndarray(np.var(self.x, axis=0))
 
-    def get_median(self) -> list:
+    def get_median(self) -> np.ndarray:
         """Calculate the median of the variables.
 
         Returns:
-            list: Numpy array of the median values of the variables.
+            np.ndarray: Numpy array of the median values of the variables.
         """
-        return list(np.median(self.x, axis=0))
+        return np.ndarray(np.median(self.x, axis=0))
 
-    def get_min(self) -> list:
+    def get_min(self) -> np.ndarray:
         """Calculate the minimum value of each variable.
 
         Returns:
-            list: Numpy array of the minimum values of the variables.
+            np.ndarray: Numpy array of the minimum values of the variables.
         """
-        return list(np.min(self.x, axis=0))
+        return np.ndarray(np.min(self.x, axis=0))
 
-    def get_max(self) -> list:
+    def get_max(self) -> np.ndarray:
         """Calculate the maximum value of each variable.
 
         Returns:
-            list: Numpy array of the maximum values of the variables.
+            np.ndarray: Numpy array of the maximum values of the variables.
         """
-        return list(np.max(self.x, axis=0))
+        return np.ndarray(np.max(self.x, axis=0))
 
     def summary(self) -> pd.DataFrame:
         """Construction of a Dataframe that resumes all the metrics.
@@ -100,7 +100,10 @@ class Dataset:
             self.get_min(),
             self.get_max(),
         ]
-        return pd.DataFrame(list(zip(*data)), columns=["Mean", "Variance", "Median", "Minimum", "Maximum"])
+        return pd.DataFrame(
+            list(zip(*data)),
+            columns=["Mean", "Variance", "Median", "Minimum", "Maximum"],
+        )
 
     def dropna(self) -> pd.DataFrame:
         """Remove all NAs in the dataset.
@@ -117,3 +120,26 @@ class Dataset:
             pd.DataFrame: Dataset with the NAs replaced.
         """
         return pd.DataFrame(self.X).fillna(fill_value)
+
+    def from_random(
+        n_samples: int,
+        n_features: int,
+        n_classes: int = 2,
+        features: list = None,
+        label: str = None,
+    ) -> "Dataset":
+        """Creation of a Dataset Object from random data input.
+
+        Args:
+            n_samples (int): Number of samples.
+            n_features (int): Number of features.
+            n_classes (int, optional): Number of classes. Defaults to 2.
+            features (list, optional): List of features. Defaults to None.
+            label (str, optional): Label name. Defaults to None.
+
+        Returns:
+            Dataset: Dataset output.
+        """
+        x = np.random.rand(n_samples, n_features)
+        y = np.random.randint(0, n_classes, n_samples)
+        return Dataset(x, y, features=features, label=label)
