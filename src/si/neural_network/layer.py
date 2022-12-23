@@ -14,13 +14,13 @@ class Dense:
   
 class SigmoidActivate:
   def __init__(self):
-    self.X = None
+    self.x = None
   
   def forward(self, x: np.ndarray) -> np.ndarray:
     pass
 
   def backward(self, error: np.ndarray, learning_rate: float) -> np.ndarray:
-    sigmoid_derivate = 1 / (1 + np.exp(-self.X))
+    sigmoid_derivate = 1 / (1 + np.exp(-self.x))
     sigmoid_derivate = sigmoid_derivate * (1 - sigmoid_derivate)
     
     # Get error from previous layer

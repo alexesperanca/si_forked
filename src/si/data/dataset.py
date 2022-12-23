@@ -39,7 +39,7 @@ class Dataset:
         """
         return False if self.y is None else True
 
-    def get_classes(self) -> np.ndarray | None:
+    def get_classes(self) -> np.ndarray:
         """Get the classes of the dataset (possible values of y)
 
         Returns:
@@ -111,15 +111,15 @@ class Dataset:
         Returns:
             pd.DataFrame: Dataset with the NAs removed.
         """
-        return pd.DataFrame(self.X).dropna(axis=0).reset_index(drop=True)
+        return pd.DataFrame(self.x).dropna(axis=0).reset_index(drop=True)
 
-    def fillna(self, fill_value: int | str) -> pd.DataFrame:
+    def fillna(self, fill_value: int) -> pd.DataFrame:
         """Replaces all NAs in the dataset.
 
         Returns:
             pd.DataFrame: Dataset with the NAs replaced.
         """
-        return pd.DataFrame(self.X).fillna(fill_value)
+        return pd.DataFrame(self.x).fillna(fill_value)
 
     def from_random(
         n_samples: int,

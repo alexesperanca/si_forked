@@ -13,7 +13,6 @@ class KMer:
         self.k = k
         self.k_mers = None
         self.alphabet = "ACTG" if not protein_seq else "ACDEFGHIKLMNPQRSTVWY"
-        print(self.alphabet)
 
     def fit(self) -> "KMer":
         # Generate the KMers -> All possible combinations of the input sequence of length self.k
@@ -53,17 +52,25 @@ class KMer:
 
 if __name__ == "__main__":
     from data.dataset import Dataset
-    # FIXME: Add the correct CSV File for tests
+    from model_selection.split import train_test_split
+    from sklearn.preprocessing import StandardScaler
+    from io_folder.csv_file import read_csv
+    from linear_model.logistic_regression import LogisticRegression
 
-    dataset_ = Dataset(
-        x=np.array([["ACTGTTTAGCGGA", "ACTGTTTAGCGGA"]]),
-        y=np.array([1, 0]),
-        features=["sequence"],
-        label="label",
-    )
+    dataset = read_csv(r"datasets/tfbs.csv", label=-1)
 
-    k_mer_ = KMer(k=2)
+    k_mer_ = KMer(k=3)
     # k_mer_ = KMer(k=2, protein_seq = True)
-    dataset_ = k_mer_.fit_transform(dataset_)
-    print(dataset_.x)
-    print(dataset_.features)
+    dataset = k_mer_.fit_transform(dataset)
+    print(dataset.x)
+    print(dataset.features)
+    
+    dataset.x = StandardScaler().fit_transform(dataset.x)
+
+    # Split the dataset
+    dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
+    lg = LogisticRegression()
+    lg.fit(dataset, use_adaptive_alpha=True)
+    print("Score:", lg.score(dataset))
+    print("Cost:", lg.cost(dataset))
+    lg.cost_plot()

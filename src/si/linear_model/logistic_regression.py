@@ -150,13 +150,13 @@ if __name__ == "__main__":
     from sklearn.preprocessing import StandardScaler
     from model_selection.split import train_test_split
 
-    dataset = read_csv(r"datasets\cpu.csv", features=True, label=6)
+    dataset = read_csv(r"datasets/cpu.csv", features=True, label=6)
     dataset.x = StandardScaler().fit_transform(dataset.x)
 
     # Split the dataset
     dataset_train, dataset_test = train_test_split(dataset, test_size=0.2)
     lg = LogisticRegression()
-    lg.fit(dataset, alpha_reduction=True)
+    lg.fit(dataset, use_adaptive_alpha=True)
     print("Score:", lg.score(dataset))
     print("Cost:", lg.cost(dataset))
     lg.cost_plot()

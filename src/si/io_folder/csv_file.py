@@ -9,7 +9,7 @@ from data.dataset import Dataset
 
 
 def read_csv(
-    filename: str, sep: str = ",", features: bool = False, label: int | None = None
+    filename: str, sep: str = ",", features: bool = False, label: int = None
 ) -> Dataset:
     """Read a CSV file and transform it into a pandas dataset object.
 
