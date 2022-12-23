@@ -86,7 +86,16 @@ class SoftMaxActivation:
   def __init__(self):
     pass
   
+  
+  def forward(self, data: np.ndarray) -> np.ndarray:
+    exp = np.exp(data)
+    return exp / np.sum(exp)
+  
 
 class ReLUActivation:
   def __init__(self):
     pass
+  
+  
+  def forward(self, data: np.ndarray) -> np.ndarray:
+    return np.maximum(data, 0)
