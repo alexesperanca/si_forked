@@ -9,10 +9,10 @@ from data.dataset import Dataset
 
 
 class KMer:
-    def __init__(self, k: int = 2, protein_seq: bool = False):
+    def __init__(self, k: int = 2, alphabet: str = "ACTG"):
         self.k = k
         self.k_mers = None
-        self.alphabet = "ACTG" if not protein_seq else "ACDEFGHIKLMNPQRSTVWY"
+        self.alphabet = alphabet
 
     def fit(self) -> "KMer":
         # Generate the KMers -> All possible combinations of the input sequence of length self.k
@@ -60,7 +60,6 @@ if __name__ == "__main__":
     dataset = read_csv(r"datasets/tfbs.csv", label=-1)
 
     k_mer_ = KMer(k=3)
-    # k_mer_ = KMer(k=2, protein_seq = True)
     dataset = k_mer_.fit_transform(dataset)
     print(dataset.x)
     print(dataset.features)
@@ -74,3 +73,20 @@ if __name__ == "__main__":
     print("Score:", lg.score(dataset))
     print("Cost:", lg.cost(dataset))
     lg.cost_plot()
+    
+    print("\nNew Test")
+    dataset_trans = read_csv(r"datasets/transporters.csv", label=-1)
+
+    k_mer_transp = KMer(k=2, alphabet="ACDEFGHIKLMNPQRSTVWY")
+    dataset_trans = k_mer_transp.fit_transform(dataset_trans)
+    print(dataset_trans.x)
+    print(dataset_trans.features)
+    
+    # Split the dataset
+    dataset_transp_train, dataset_transp_test = train_test_split(dataset_trans, test_size=0.2)
+    lg = LogisticRegression()
+    lg.fit(dataset_trans)
+    print("Score:", lg.score(dataset_trans))
+    print("Cost:", lg.cost(dataset_trans))
+    lg.cost_plot()
+    
