@@ -27,7 +27,9 @@ class RidgeRegression:
         self.theta_zero = None
         self.cost_history = {}
 
-    def fit(self, dataset: Dataset, use_adaptive_alpha: bool = False) -> "RidgeRegression":
+    def fit(
+        self, dataset: Dataset, use_adaptive_alpha: bool = False
+    ) -> "RidgeRegression":
         """Estimation of the theta and theta zero for the entry dataset.
 
         Args:
@@ -113,7 +115,7 @@ class RidgeRegression:
             dataset (Dataset): Dataset input.
 
         Returns:
-            float: Cost function of the model.
+            float: Cost value of the model.
         """
         y_pred = self.predict(dataset)
         return (

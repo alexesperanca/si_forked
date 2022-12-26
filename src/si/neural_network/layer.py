@@ -8,94 +8,150 @@ from statistics.sigmoid_function import sigmoid_function
 
 
 class Dense:
-  def __init__(self, input_size: int, output_size: int):
-    """Dense layer is an algorithm where each neuron of a layer is connected to all the neurons in the following layer.
+    def __init__(self, input_size: int, output_size: int):
+        """Dense layer is an algorithm where each neuron of a layer is connected to all the neurons in the following layer.
 
-    Args:
-        input_size (int): The number of input values the layer will receive.
-        output_size (int): The number of outputs the layer will produce.
-    """
-    self.input_size = input_size
-    self.output_size = output_size
+        Args:
+            input_size (int): The number of input values the layer will receive.
+            output_size (int): The number of outputs the layer will produce.
+        """
+        self.input_size = input_size
+        self.output_size = output_size
+        self.x = None
 
-    # Weights of the layer
-    self.weights = np.random.randn(input_size, output_size) * 0.01
-    # Bias of the layer
-    self.bias = np.zeros((1, output_size))
-  
-  def forward(self, x: np.ndarray) -> np.ndarray:
-    """Forward propagation of the layer using the given input.
+        # Weights of the layer
+        self.weights = np.random.randn(input_size, output_size) * 0.01
+        # Bias of the layer
+        self.bias = np.zeros((1, output_size))
 
-    Args:
-        x (np.ndarray): Layer input.
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Forward propagation of the layer using the given input.
 
-    Returns:
-        np.ndarray: Layer output.
-    """
-    return np.dot(x, self.weights) + self.bias
-  
-  def backward(self, error: np.ndarray, learning_rate: float) -> np.ndarray:
-    """Backward propagation of the layer.
+        Args:
+            x (np.ndarray): Data layer input.
 
-    Args:
-        error (np.ndarray): FIXME: Error from the further layers in the neural network.
-        learning_rate (float): _description_
+        Returns:
+            np.ndarray: Data layer output.
+        """
+        # Update last inputted value.
+        self.x = x
+        return np.dot(x, self.weights) + self.bias
 
-    Returns:
-        np.ndarray: _description_
-    """
-    return error
-  
-  
+    def backward(self, error: np.ndarray, learning_rate: float) -> np.ndarray:
+        """Backward propagation of the layer.
+
+        Args:
+            error (np.ndarray): Error of the loss function.
+            learning_rate (float): The learning rate value.
+
+        Returns:
+            np.ndarray: Error propagation of the previous layer.
+        """
+        # Update the weight and bias
+        self.weights = self.weights - learning_rate * np.dot(self.x.T, error)
+        self.bias = self.bias - learning_rate * np.sum(error, axis=0)
+
+        # Error propagations return.
+        return np.dot(error, self.weights.T)
+
+
 class SigmoidActivate:
-  def __init__(self):
-    """Sigmoid activation layer.
-    """
-    self.x = None
-  
-  def forward(self, x: np.ndarray) -> np.ndarray:
-    """Forward propagation of the layer using the given input.
+    def __init__(self):
+        """Sigmoid activation layer."""
+        pass
 
-    Args:
-        x (np.ndarray): Layer input.
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Forward propagation of the layer using the given input.
 
-    Returns:
-        np.ndarray: Layer output.
-    """
-    return 1 / (1 + np.exp(-x))
+        Args:
+            x (np.ndarray): Data layer input.
 
-  def backward(self, error: np.ndarray, learning_rate: float) -> np.ndarray:
-    """Backward propagation of the layer.
+        Returns:
+            np.ndarray: Data layer output.
+        """
+        return 1 / (1 + np.exp(-x))
 
-    Args:
-        error (np.ndarray): FIXME: Error from the further layers in the neural network.
-        learning_rate (float): _description_
+    def backward(self, x: np.ndarray, error: np.ndarray) -> np.ndarray:
+        """Backward propagation of the layer.
 
-    Returns:
-        np.ndarray: _description_
-    """
-    # sigmoid_derivate = 1 / (1 + np.exp(-self.x))
-    # sigmoid_derivate = sigmoid_derivate * (1 - sigmoid_derivate)
-    
-    # Get error from previous layer
-    # error_to_propagate = error * sigmoid_derivate
-    return error
-  
+        Args:
+            x (np.ndarray): Data layer input.
+            error (np.ndarray): Error of the loss function.
+
+        Returns:
+            np.ndarray: Error propagation of the previous layer.
+        """
+        # Loss error calculation -> FIXME: Should this be the sigmoid function?
+        # FIXME: When propagating backwards, we should update the X or pass it as a parameter?
+        sigmoid_derivate = 1 / (1 + np.exp(-x))
+        sigmoid_derivate = sigmoid_derivate * (1 - sigmoid_derivate)
+
+        # Get error from previous layer
+        return error * sigmoid_derivate
+
 
 class SoftMaxActivation:
-  def __init__(self):
-    pass
-  
-  
-  def forward(self, data: np.ndarray) -> np.ndarray:
-    exp = np.exp(data)
-    return exp / np.sum(exp)
-  
+    def __init__(self):
+        pass
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Calculates the occurrence probability of each class.
+
+        Args:
+            x (np.ndarray): Data layer input.
+
+        Returns:
+            np.ndarray: Data layer output. The occurrence probability of each class.
+        """
+        exp = np.exp(x)
+        # Keep the array dimension
+        return exp / np.sum(exp, axis=1, keepdims=True)
+
+    def backward(self, x: np.ndarray, error: np.ndarray) -> np.ndarray:
+        """Backward propagation of the layer.
+
+        Args:
+            x (np.ndarray): Data layer input.
+            error (np.ndarray): Error of the loss function.
+
+        Returns:
+            np.ndarray: Error propagation of the previous layer.
+        """
+
+        # FIXME: How should this be done?
+        return error
+
 
 class ReLUActivation:
-  def __init__(self):
+    def __init__(self):
+        pass
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Forward propagation of the layer using the given input.
+
+        Args:
+            x (np.ndarray): Data layer input.
+
+        Returns:
+            np.ndarray: Data layer output. The rectified linear relationship.
+        """
+        # 0 is the minimum since we can only consider the positive part of the linear function
+        return np.maximum(x, 0)
+
+    def backward(self, x: np.ndarray, error: np.ndarray) -> np.ndarray:
+        """Backward propagation of the layer.
+
+        Args:
+            x (np.ndarray): Data layer input.
+            error (np.ndarray): Error of the loss function.
+
+        Returns:
+            np.ndarray: Error propagation of the previous layer.
+        """
+        # Substitute all the values for 1 when higher than 0, otherwise 0
+        return error * np.where(self.x > 0, 1, 0)
+
+
+if __name__ == "__main__":
+    # FIXME: Test
     pass
-  
-  
-  def forward(self, data: np.ndarray) -> np.ndarray:
-    return np.maximum(data, 0)
