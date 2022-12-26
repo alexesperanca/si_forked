@@ -22,6 +22,7 @@ class Dense:
         # Weights of the layer
         self.weights = np.random.randn(input_size, output_size) * 0.01
         # Bias of the layer
+        # Represents the shift or offset of the activation function. Allows the model to learn more complex relationships in the data and avoid learning only linear relationships.
         self.bias = np.zeros((1, output_size))
 
     def forward(self, x: np.ndarray) -> np.ndarray:
