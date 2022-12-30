@@ -59,7 +59,6 @@ class KMeans:
         Returns:
             list: Euclidean distances between each sample and the centroids
         """
-        print(self.centroids)
         return [self.distance(sample, self.centroids) for sample in dataset]
 
     def predict(self, dataset: Dataset):

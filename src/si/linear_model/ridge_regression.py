@@ -51,7 +51,6 @@ class RidgeRegression:
         # gradient descent
         for i in range(self.max_iter):
             # Predict Y
-            # FIXME: Doubts in this equation
             y_pred = np.dot(dataset.x, self.theta) + self.theta_zero
 
             # Calculate the gradient for the alpha

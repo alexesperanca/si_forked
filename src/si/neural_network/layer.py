@@ -82,8 +82,6 @@ class SigmoidActivate:
         Returns:
             np.ndarray: Error propagation of the previous layer.
         """
-        # Loss error calculation -> FIXME: Should this be the sigmoid function?
-        # FIXME: When propagating backwards, we should update the X or pass it as a parameter?
         sigmoid_derivate = 1 / (1 + np.exp(-x))
         sigmoid_derivate = sigmoid_derivate * (1 - sigmoid_derivate)
 
@@ -150,7 +148,7 @@ class ReLUActivation:
             np.ndarray: Error propagation of the previous layer.
         """
         # Substitute all the values for 1 when higher than 0, otherwise 0
-        return error * np.where(self.x > 0, 1, 0)
+        return error * np.where(x > 0, 1, 0)
 
 
 if __name__ == "__main__":

@@ -50,7 +50,6 @@ class LogisticRegression:
         # gradient descent
         for i in range(self.max_iter):
             # Predict Y with the sigmoid function
-            # FIXME: Doubts in this equation
             y_pred = sigmoid_function(np.dot(dataset.x, self.theta) + self.theta_zero)
 
             # Calculate the gradient for the alpha
