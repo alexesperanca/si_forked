@@ -50,18 +50,19 @@ class NN:
         x, y = (dataset.x, dataset.y)
         # Train the model n (epochs) times
         for epoch in range(1, self.epochs + 1):
+            x_forward = x.copy()
             # Forward propagation of the input layer data
             for layer in self.layers:
-                x = layer.forward(x)
+                x_forward = layer.forward(x_forward)
 
             # calculate the associated error with the predicted values
-            error = mse_derivate(y, x)
+            error = mse_derivate(y, x_forward)
 
             # Backward propagation of the input layer data
             for layer in self.layers[::-1]:
                 error = layer.backward(error, self.learning_rate)
 
-            cost = mse(y, x)
+            cost = mse(y, x_forward)
             self.history[epoch] = cost
 
             if self.verbose:
@@ -180,3 +181,7 @@ if __name__ == "__main__":
     # Predict the models
     nn1.fit(dataset)
     nn1.predict(dataset_test1)
+    nn2.fit(dataset)
+    nn2.predict(dataset_test2)
+    nn3.fit(dataset)
+    nn3.predict(dataset_test3)
