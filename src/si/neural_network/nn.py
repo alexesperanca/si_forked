@@ -4,6 +4,7 @@ import numpy as np
 CLASSES_PATH = "src/si"
 sys.path.insert(0, CLASSES_PATH)
 
+from neural_network.layer import *
 from data.dataset import Dataset
 from metrics.accuracy import accuracy
 from metrics.mse import mse
@@ -38,7 +39,7 @@ class NN:
         self.history = {}
 
     def fit(self, dataset: Dataset) -> "NN":
-        """Model training.We propagate forward and backwards the number of epochs passed initially. 
+        """Model training.We propagate forward and backwards the number of epochs passed initially.
 
         Args:
             dataset (Dataset): Dataset input.
@@ -111,5 +112,73 @@ class NN:
 
 
 if __name__ == "__main__":
-    # FIXME: Test
-    pass
+    # Construct the layers
+    layer1 = Dense(32, 32)
+    layer2 = Dense(32, 16)
+    layer3 = Dense(16, 1)
+
+    # Evaluation 10.3
+    layer1_sg_activation = SigmoidActivation()
+    layer2_sg_activation = SigmoidActivation()
+    layer3_sg_activation = SigmoidActivation()
+
+    nn1 = NN(
+        layers=[
+            layer1,
+            layer1_sg_activation,
+            layer2,
+            layer2_sg_activation,
+            layer3,
+            layer3_sg_activation,
+        ]
+    )
+
+    # Evaluation 10.4
+    layer1_sg_activation = SigmoidActivation()
+    layer2_sg_activation = SigmoidActivation()
+    layer3_sm_activation = SoftMaxActivation()
+
+    nn2 = NN(
+        layers=[
+            layer1,
+            layer1_sg_activation,
+            layer2,
+            layer2_sg_activation,
+            layer3,
+            layer3_sm_activation,
+        ]
+    )
+
+    # Evaluation 10.5
+    layer1_relu_activation = ReLUActivation()
+    layer2_relu_activation = ReLUActivation()
+    layer3_linear_activation = LinearActivation()
+
+    nn3 = NN(
+        layers=[
+            layer1,
+            layer1_relu_activation,
+            layer2,
+            layer2_relu_activation,
+            layer3,
+            layer3_linear_activation,
+        ]
+    )
+
+    # Construct the Datasets
+    dataset = Dataset.from_random(64, 32)
+
+    y_test1 = np.random.randint(0, 2, 64)  # Binary, so only 0 or 1
+    dataset_test1 = Dataset(dataset.x, y_test1)
+
+    y_test2 = np.random.randint(0, 3, 64)  # 3 classes
+    dataset_test2 = Dataset(dataset.x, y_test2)
+
+    y_test3 = (
+        np.random.rand(64) * 100
+    )  # Regression problem -> Output values are continuous
+    dataset_test3 = Dataset(dataset.x, y_test3)
+
+    # Predict the models
+    nn1.fit(dataset)
+    nn1.predict(dataset_test1)

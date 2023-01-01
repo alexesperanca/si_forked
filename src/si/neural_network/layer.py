@@ -56,7 +56,7 @@ class Dense:
         return np.dot(error, self.weights.T)
 
 
-class SigmoidActivate:
+class SigmoidActivation:
     def __init__(self):
         """Sigmoid activation layer."""
         pass
@@ -91,6 +91,7 @@ class SigmoidActivate:
 
 class SoftMaxActivation:
     def __init__(self):
+        """SoftMax activation layer."""
         pass
 
     def forward(self, x: np.ndarray) -> np.ndarray:
@@ -123,6 +124,7 @@ class SoftMaxActivation:
 
 class ReLUActivation:
     def __init__(self):
+        """ReLU activation layer."""
         pass
 
     def forward(self, x: np.ndarray) -> np.ndarray:
@@ -151,6 +153,20 @@ class ReLUActivation:
         return error * np.where(x > 0, 1, 0)
 
 
-if __name__ == "__main__":
-    # FIXME: Test
-    pass
+class LinearActivation:
+    def __init__(self):
+        """Linear activation layer.
+        Has the characteristic of the returned data being proportional to the given data."""
+        pass
+
+    @staticmethod
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """Forward propagation of the layer using the given input.
+
+        Args:
+            x (np.ndarray): Data layer input.
+
+        Returns:
+            np.ndarray: Data layer output. The rectified linear relationship.
+        """
+        return x
