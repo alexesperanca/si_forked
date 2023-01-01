@@ -117,8 +117,6 @@ class SoftMaxActivation:
         Returns:
             np.ndarray: Error propagation of the previous layer.
         """
-
-        # FIXME: How should this be done?
         return error
 
 

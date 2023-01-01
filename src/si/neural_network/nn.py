@@ -59,9 +59,7 @@ class NN:
 
             # Backward propagation of the input layer data
             for layer in self.layers[::-1]:
-                error = layer.backward(
-                    error, self.learning_rate
-                )  # FIXME: This only applies to the Dense class, need to verify the learning_rate
+                error = layer.backward(error, self.learning_rate)
 
             cost = mse(y, x)
             self.history[epoch] = cost

@@ -60,7 +60,6 @@ class LogisticRegression:
 
             # Regularization term
             # theta * (1 - alpha * (l2/m))
-            # FIXME: Missing the value 1?
             penalization_term = self.theta * self.alpha * (self.l2_penalty / x_shape)
 
             # updating the model parameters
@@ -124,7 +123,6 @@ class LogisticRegression:
         x_shape, _ = dataset.shape()
         add_value = self.l2_penalty / (2 * x_shape) * np.sum(self.theta**2)
 
-        # Fix division from 0 and -inf values (NOT SURE) -> FIXME: np.log(1 - predictions, where=1 - predictions > 0)
         logarithm_value = np.log(1 - predictions)
         cost = (
             -1

@@ -61,7 +61,6 @@ class RidgeRegression:
 
             # Regularization term
             # theta * (1 - alpha * (l2/m))
-            # FIXME: Missing the value 1?
             penalization_term = self.theta * self.alpha * (self.l2_penalty / x_shape)
 
             # updating the model parameters
