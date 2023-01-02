@@ -180,8 +180,8 @@ if __name__ == "__main__":
 
     # Predict the models
     nn1.fit(dataset)
-    nn1.predict(dataset_test1)
+    print(nn1.predict(dataset_test1))
     nn2.fit(dataset)
-    nn2.predict(dataset_test2)
+    print(nn2.predict(dataset_test2))
     nn3.fit(dataset)
-    nn3.predict(dataset_test3)
+    print(nn3.predict(dataset_test3))

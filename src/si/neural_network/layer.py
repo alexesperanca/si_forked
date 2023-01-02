@@ -157,7 +157,6 @@ class LinearActivation:
         Has the characteristic of the returned data being proportional to the given data."""
         pass
 
-    @staticmethod
     def forward(self, x: np.ndarray) -> np.ndarray:
         """Forward propagation of the layer using the given input.
 
@@ -165,6 +164,18 @@ class LinearActivation:
             x (np.ndarray): Data layer input.
 
         Returns:
-            np.ndarray: Data layer output. The rectified linear relationship.
+            np.ndarray: Data layer output.
         """
         return x
+
+    def backward(self, x: np.ndarray, error: np.ndarray) -> np.ndarray:
+        """Backward propagation of the layer.
+
+        Args:
+            x (np.ndarray): Data layer input.
+            error (np.ndarray): Error of the loss function.
+
+        Returns:
+            np.ndarray: Error propagation of the previous layer.
+        """
+        return error
