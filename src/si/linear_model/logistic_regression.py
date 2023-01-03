@@ -59,6 +59,7 @@ class LogisticRegression:
             )
 
             # Regularization term
+            # Increases the cost function and allows greater randomness to the algortihm
             # theta * (1 - alpha * (l2/m))
             penalization_term = self.theta * self.alpha * (self.l2_penalty / x_shape)
 
